@@ -17,11 +17,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "quantum-travel-admin.vercel.app", "quantum-travel-bice.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://quantum-travel-bice.vercel.app", "https://quantum-travel-admin.vercel.app/"];
 
 // CORS Configuration
 const corsOptions = {
-  origin: (origin, callback) => 
+  origin: (origin, callback) => {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
