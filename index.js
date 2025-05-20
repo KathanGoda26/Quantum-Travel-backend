@@ -18,7 +18,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const allowedOrigins = [
-  "https://quantum-travel-frontend.vercel.app/",
+  "https://quantum-travel-frontend.vercel.app",
   "https://quantum-travel-admin.vercel.app",
 ];
 
