@@ -6,14 +6,14 @@ export const verifyToken = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json({ success: false, message: "You are not authorized" });
+      .json({ success: false, message: "No token provided" });
   }
 
   //if token exist then verify the token
   jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
     if (err) {
       return res
-        .status(401)
+        .status(403)
         .json({ success: false, message: "token is invalid" });
     }
     req.user = user;
@@ -23,16 +23,20 @@ export const verifyToken = (req, res, next) => {
 
 export const verifyUser = (req, res, next) => {
   verifyToken(req, res, () => {
-    // Allow access if token is valid
-    if (req.user) {
-      next();
-    } else {
+    if (!req.user) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    } 
+      next();
   });
 };
 
 export const isSuperAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authenticated" });
+  }
+  
   if (req.user.role !== 'superadmin') {
     return res.status(403).json({ success: false, message: "Access Denied" });
   }
@@ -40,19 +44,24 @@ export const isSuperAdmin = (req, res, next) => {
 };
 
 export const verifySuperAdmin = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const authHeader = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ success: false, message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY); // Keep secret key consistent
+
     if (decoded.role !== "superadmin") {
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({ success: false, message: "Superadmin access only" });
     }
 
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
+    res.status(403).json({ success: false, message: "Invalid or expired token" });
   }
 };
