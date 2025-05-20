@@ -17,7 +17,12 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://quantum-travel-bice.vercel.app", "https://quantum-travel-admin.vercel.app/"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://quantum-travel-bice.vercel.app",
+  "https://quantum-travel-admin.vercel.app",
+];
 
 // CORS Configuration
 const corsOptions = {
@@ -39,9 +44,9 @@ const connect = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("Mongo database connected");
+    console.log("✅ Mongo database connected");
   } catch (error) {
-    console.error("Mongo database connection failed:", error.message);
+    console.error("❌ Mongo database connection failed:", error.message);
   }
 };
 
@@ -50,6 +55,16 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
+
+// ✅ Root route for basic deployment test
+app.get("/", (req, res) => {
+  res.send("🌐 Quantum Travel Backend is Running");
+});
+
+// ✅ Optional: Health-check endpoint
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ success: true, message: "API is healthy" });
+});
 
 // Routes
 app.use("/api/v1/tours", tourRoute);
@@ -63,7 +78,7 @@ app.use("/api/v1/upload", uploadRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("❌ Error Stack:", err.stack);
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
@@ -74,7 +89,7 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   await connect();
   app.listen(port, () => {
-    console.log("Server is listening on port", port);
+    console.log(`🚀 Server is listening on port ${port}`);
   });
 };
 
