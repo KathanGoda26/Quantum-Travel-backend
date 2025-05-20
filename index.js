@@ -20,7 +20,7 @@ const port = process.env.PORT || 5000;
 // CORS Configuration
 const corsOptions = {
   origin: (origin, callback) => {
-    const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+    const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "quantum-travel-admin.vercel.app", "quantum-travel-bice.vercel.app"];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
