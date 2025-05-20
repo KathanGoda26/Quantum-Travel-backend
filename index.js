@@ -42,9 +42,9 @@ const connect = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("✅ Mongo database connected");
+    console.log("Mongo database connected");
   } catch (error) {
-    console.error("❌ Mongo database connection failed:", error.message);
+    console.error("Mongo database connection failed:", error.message);
   }
 };
 
@@ -54,14 +54,8 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-// ✅ Root route for basic deployment test
 app.get("/", (req, res) => {
   res.send("🌐 Quantum Travel Backend is Running");
-});
-
-// ✅ Optional: Health-check endpoint
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ success: true, message: "API is healthy" });
 });
 
 // Routes
