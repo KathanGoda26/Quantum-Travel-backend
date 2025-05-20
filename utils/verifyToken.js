@@ -22,13 +22,12 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const verifyUser = (req, res, next) => {
-  verifyToken(req, res, next, () => {
-    if (req.user.id === req.params.id || req.user.role === "admin") {
+  verifyToken(req, res, () => {
+    // Allow access if token is valid
+    if (req.user) {
       next();
     } else {
-      return res
-        .status(401)
-        .json({ success: false, message: "You are not authenticated" });
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
   });
 };
