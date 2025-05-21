@@ -5,7 +5,7 @@ export const verifyToken = (req, res, next) => {
 
   if (!token) {
     return res
-      .status(401)
+      .status(403)
       .json({ success: false, message: "No Token Provided" });
   }
 
