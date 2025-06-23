@@ -1,23 +1,32 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.accessToken;
-
-  if (!token) {
-    return res
-      .status(403)
-      .json({ success: false, message: "No Token Provided" });
+  let token;
+  
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
   }
 
-  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-    if (err) {
-      return res
-        .status(403)
-        .json({ success: false, message: "token is invalid" });
-    }
-    req.user = user;
+  if (!token) {
+    return res.status(403).json({
+      success: false,
+      message: "No token provided",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded;
     next();
-  });
+  } catch (err) {
+    return res.status(403).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
 };
 
 export const verifyUser = (req, res, next) => {
